@@ -233,25 +233,42 @@ wss.on('connection', (ws) => {
 
         const result = await ea.processSignal(signal);
 
-        // Track trade in history — PnL from real account equity change
+        // Track trade in history — two PnL metrics
         if (result.success && result.execution) {
-          // Force fresh balance (bypass cache)
           accountCacheTime = 0;
-          await new Promise(r => setTimeout(r, 500)); // Wait for OKX to settle
+          await new Promise(r => setTimeout(r, 500));
           const acctAfterTrade = await getAccountBalance();
           const prevEquity = tradeHistory.length > 0
             ? tradeHistory[tradeHistory.length - 1].equity
             : (initialEquity || acctAfterTrade.totalEquity);
-          const realPnL = +(acctAfterTrade.totalEquity - prevEquity).toFixed(2);
+
+          // 1. Account equity delta (includes all asset price changes)
+          const equityPnL = +(acctAfterTrade.totalEquity - prevEquity).toFixed(2);
+
+          // 2. Trade-specific PnL (only from this signal's execution)
+          // For market orders: fee is the immediate cost
+          const e = result.execution;
+          const fillSize = parseFloat(e.fillSize) || 0;
+          const fillPrice = e.fillPrice || 0;
+          const notional = fillSize * fillPrice;
+          // Fee from OKX is in coin units (negative), convert to USD
+          const feeUsd = Math.abs(e.fee || 0) * fillPrice;
+          // For spot market orders, tradePnL = -fee (no holding period)
+          // The real signal PnL comes from comparing buy vs sell over time
+          const tradePnL = +(-feeUsd).toFixed(4);
 
           tradeHistory.push({
             id: tradeHistory.length + 1,
-            pair: result.execution.instId,
-            side: result.execution.side,
-            orderId: result.execution.orderId,
-            fillPrice: result.execution.fillPrice,
-            pnl: realPnL,  // Real PnL from account equity delta
-            real: result.execution.real,
+            pair: e.instId,
+            side: e.side,
+            orderId: e.orderId,
+            fillPrice: e.fillPrice,
+            fillSize: e.fillSize,
+            notional: +notional.toFixed(2),
+            fee: feeUsd,
+            tradePnL,       // PnL from this trade only (fee cost)
+            equityPnL,      // Account equity change since last trade
+            real: e.real,
             time: new Date().toLocaleTimeString('zh-CN'),
             equity: acctAfterTrade.totalEquity,
           });
