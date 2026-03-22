@@ -1,0 +1,19 @@
+node_modules/
+.env
+.env.local
+.env.production
+
+# Hardhat
+cache/
+artifacts/
+
+# OS
+.DS_Store
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+dist/

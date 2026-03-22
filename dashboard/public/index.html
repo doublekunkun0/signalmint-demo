@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>SignalMint Demo</title>
+<style>
+:root{--bg:#0B0E17;--s:#13161F;--s2:#1A1E2A;--bd:#2A2D3A;--bd2:#363944;--g:#10B981;--gd:#0D2B1F;--gt:#34D399;--b:#1B6EF3;--bd3:#0D1F3C;--bt:#60A5FA;--a:#D97706;--ad:#2D1B00;--at:#FCD34D;--p:#8B5CF6;--pd:#2D1B5E;--pt:#A78BFA;--r:#EF4444;--rd:#2D0A0A;--tx:#E8E8E8;--tx2:#9CA3AF;--tx3:#4B5563;--f:-apple-system,'SF Mono','Cascadia Code','Consolas',monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--tx);font-family:var(--f);min-height:100vh;display:flex;flex-direction:column;align-items:center}
+.tb{width:100%;background:var(--s);border-bottom:1px solid var(--bd);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-l{display:flex;align-items:center;gap:10px}
+.ti{width:36px;height:36px;background:var(--b);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff}
+.tn{font-size:18px;font-weight:700;color:#fff}
+.ts2{font-size:10px;color:var(--tx3);margin-top:1px}
+.tags{display:flex;gap:6px}
+.pill{font-size:10px;padding:3px 8px;border-radius:12px;font-weight:500;border:1px solid transparent}
+.pb{background:var(--bd3);color:var(--bt);border-color:#1B6EF333}
+.pg{background:var(--gd);color:var(--gt);border-color:#10B98133}
+.pp{background:var(--pd);color:var(--pt);border-color:#8B5CF633}
+.pa{background:var(--ad);color:var(--at);border-color:#D9770633}
+.main{width:100%;display:flex;flex:1;min-height:calc(100vh - 61px)}
+.sb{width:200px;min-width:200px;background:var(--s);border-right:1px solid var(--bd);padding:16px 10px;display:flex;flex-direction:column;flex-shrink:0}
+.sb-ttl{font-size:9px;letter-spacing:1.2px;color:var(--tx3);text-transform:uppercase;margin-bottom:10px;padding-left:8px}
+.ni{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:7px;cursor:pointer;margin-bottom:3px;border:1px solid transparent;font-size:12px;color:var(--tx2);transition:all .15s}
+.ni:hover{background:var(--s2);color:var(--tx)}
+.ni.act{background:var(--bd3);color:var(--bt);border-color:#1B6EF333}
+.ni.act.g{background:var(--gd);color:var(--gt);border-color:#10B98133}
+.ni.act.a{background:var(--ad);color:var(--at);border-color:#D9770633}
+.ni.act.p{background:var(--pd);color:var(--pt);border-color:#8B5CF633}
+.ni-ic{font-size:15px;width:18px;text-align:center}
+.ni-lb{flex:1}
+.ni-bg{font-size:9px;padding:1px 5px;border-radius:7px;background:var(--bd2);color:var(--tx3)}
+.sdiv{height:1px;background:var(--bd);margin:10px 3px}
+.cont{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.panel{display:none;flex:1;flex-direction:column;overflow:hidden}
+.panel.act{display:flex}
+.hw{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:30px 20px;text-align:center;overflow-y:auto}
+.ht{font-size:30px;font-weight:700;color:#fff;margin-bottom:8px}
+.hs{font-size:13px;color:var(--tx2);margin-bottom:36px;max-width:480px;line-height:1.7}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:600px;width:100%}
+.rc{background:var(--s);border:1px solid var(--bd);border-radius:12px;padding:22px;cursor:pointer;transition:border-color .15s;text-align:left}
+.rc:hover{background:var(--s2)}
+.rc.rg2:hover{border-color:var(--g)} .rc.rb2:hover{border-color:var(--b)} .rc.ra2:hover{border-color:var(--a)} .rc.rp2:hover{border-color:var(--p)}
+.ri{font-size:26px;margin-bottom:10px}
+.rn{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.rd2{font-size:11px;color:var(--tx2);line-height:1.5}
+.rh{margin-top:10px;font-size:10px}
+.nb{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:700;margin-right:3px}
+.ng{background:var(--g);color:#000} .nb2{background:var(--b);color:#fff} .na{background:var(--a);color:#000} .np{background:var(--p);color:#fff}
+.sh{padding:16px 22px 14px;border-bottom:1px solid var(--bd)}
+.sh-r{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.sh-ic{font-size:18px} .sh-t{font-size:17px;font-weight:700;color:#fff}
+.sh-s2{font-size:11px;color:var(--tx2)}
+.sh-tools{display:flex;gap:5px;margin-top:8px}
+.fa{padding:16px 22px;display:flex;flex-direction:column;gap:14px}
+.fr{display:flex;gap:10px}
+.fg{display:flex;flex-direction:column;gap:5px;flex:1}
+.fl{font-size:10px;color:var(--tx3);letter-spacing:.4px}
+.fi{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:9px 11px;color:var(--tx);font-size:12px;font-family:var(--f);outline:none;transition:border-color .15s;width:100%}
+.fi:focus{border-color:var(--b)}
+.fsel{background:var(--s2);border:1px solid var(--bd);border-radius:7px;padding:9px 11px;color:var(--tx);font-size:12px;font-family:var(--f);outline:none;appearance:none;width:100%}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:9px 16px;border-radius:7px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--f);transition:opacity .15s,transform .1s}
+.btn:hover{opacity:.9} .btn:active{transform:scale(.97)}
+.bng{background:var(--g);color:#000} .bnb{background:var(--b);color:#fff} .bna{background:var(--a);color:#000}
+.bng2{background:transparent;color:var(--tx2);border:1px solid var(--bd)}
+.bng2:hover{background:var(--s2);color:var(--tx)}
+.bsm{padding:5px 11px;font-size:10px}
+.sr{display:flex;border-bottom:1px solid var(--bd);flex-shrink:0}
+.sb2{flex:1;padding:12px 18px;border-right:1px solid var(--bd);text-align:center}
+.sb2:last-child{border-right:none}
+.sv{font-size:20px;font-weight:700;color:#fff} .sl{font-size:10px;color:var(--tx3);margin-top:2px}
+.lw{flex:1;overflow-y:auto;padding:14px 22px;display:flex;flex-direction:column;gap:0}
+.le{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--bd);align-items:flex-start;animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.lt{font-size:10px;color:var(--tx3);min-width:48px;padding-top:2px;font-family:monospace}
+.lb2{font-size:9px;font-weight:700;padding:2px 5px;border-radius:4px;min-width:56px;text-align:center;margin-top:1px;flex-shrink:0}
+.lbg{background:var(--gd);color:var(--gt)} .lbb{background:var(--bd3);color:var(--bt)} .lba{background:var(--ad);color:var(--at)} .lbx{background:var(--s2);color:var(--tx3)} .lbr{background:var(--rd);color:#F87171}
+.lm{font-size:11px;color:var(--tx2);line-height:1.5;flex:1}
+.lm strong{color:var(--tx)}
+.hg{color:var(--gt);font-weight:600} .hb{color:var(--bt);font-weight:600} .ha{color:var(--at);font-weight:600} .hr{color:#F87171;font-weight:600}
+.lm code{background:var(--s2);border:1px solid var(--bd);padding:1px 4px;border-radius:3px;font-size:10px;color:var(--gt);font-family:monospace}
+.ab{padding:12px 22px;border-top:1px solid var(--bd);display:flex;align-items:center;gap:10px;background:var(--s);flex-shrink:0}
+.strack{display:flex;align-items:center;padding:10px 22px;border-bottom:1px solid var(--bd);overflow-x:auto;flex-shrink:0}
+.sc2{display:flex;flex-direction:column;align-items:center}
+.sd{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;border:1px solid var(--bd);background:var(--s2);color:var(--tx3);transition:all .2s;flex-shrink:0}
+.sd.dn{background:var(--g);color:#000;border-color:var(--g)} .sd.ac{background:var(--b);color:#fff;border-color:var(--b)}
+.sline{width:18px;height:1px;background:var(--bd);transition:background .2s;flex-shrink:0}
+.sline.dn{background:var(--g)}
+.slbl{font-size:8px;color:var(--tx3);margin-top:2px;text-align:center;white-space:nowrap}
+.tw{padding:14px 22px;overflow-x:auto;flex:1}
+.dt{width:100%;border-collapse:collapse;font-size:11px}
+.dt th{text-align:left;padding:7px 10px;font-size:9px;font-weight:600;letter-spacing:.8px;color:var(--tx3);text-transform:uppercase;border-bottom:1px solid var(--bd);background:var(--s)}
+.dt td{padding:9px 10px;border-bottom:1px solid var(--bd);color:var(--tx2)}
+.dt tr:hover td{background:var(--s2)}
+.rbg{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;font-size:9px;font-weight:700}
+.r1{background:#F59E0B;color:#000} .r2{background:#9CA3AF;color:#000} .r3{background:#B45309;color:#fff} .rn2{background:var(--s2);color:var(--tx3)}
+.wr{font-weight:700} .wh{color:var(--gt)} .wm{color:var(--at)} .wl{color:#F87171}
+.an{color:#fff;font-weight:600} .ap{color:var(--tx3);font-size:9px}
+.sbtn{font-size:10px;padding:4px 10px;border-radius:5px;background:var(--bd3);color:var(--bt);border:1px solid #1B6EF333;cursor:pointer;font-family:var(--f)}
+.sbtn:hover{background:var(--b);color:#fff}
+.cw{padding:18px 22px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1}
+.cc{background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:14px}
+.cct{font-size:11px;color:var(--tx3);margin-bottom:9px;font-weight:600}
+.cr{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bd)}
+.cr:last-child{border-bottom:none}
+.ck{font-size:10px;color:var(--tx3)} .cv{font-size:10px;color:var(--tx);font-family:monospace}
+.cv.ad{color:var(--bt);font-size:9px} .cv.gn{color:var(--gt)} .cv.am{color:var(--at)}
+.em{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--tx3);gap:6px}
+.em-i{font-size:28px;opacity:.4} .em-t{font-size:11px}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:var(--s)}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+.bl{animation:bl 1.2s infinite}
+/* Account panel */
+.acct-panel{background:var(--s2);border:1px solid var(--bd);border-radius:9px;margin:14px 22px 0;padding:14px}
+.acct-stats{display:flex;gap:0}
+.acct-stat{flex:1;text-align:center;padding:6px 8px;border-right:1px solid var(--bd)}
+.acct-stat:last-child{border-right:none}
+.acct-val{font-size:18px;font-weight:700;font-family:monospace}
+.acct-lbl{font-size:9px;color:var(--tx3);margin-top:2px}
+.acct-assets{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.acct-asset{font-size:10px;background:var(--bg);border:1px solid var(--bd);border-radius:5px;padding:3px 8px}
+.eq-wrap{margin-top:10px;background:var(--bg);border-radius:7px;padding:8px 10px}
+.eq-head{display:flex;justify-content:space-between;font-size:9px;color:var(--tx3);margin-bottom:4px}
+</style>
+</head>
+<body>
+<div class="tb">
+  <div class="tb-l">
+    <div class="ti">SM</div>
+    <div><div class="tn">SignalMint</div><div class="ts2">x402 驱动的 Agent 跟单交易信号市场</div></div>
+  </div>
+  <div class="tags">
+    <span class="pill pb">Agent Trade Kit</span>
+    <span class="pill pg">Onchain OS</span>
+    <span class="pill pa">x402 Protocol</span>
+    <span class="pill pp">X Layer</span>
+  </div>
+</div>
+<div class="main">
+  <div class="sb">
+    <div class="sb-ttl">导航</div>
+    <div class="ni" id="nav-home" onclick="go('home')"><span class="ni-ic">⊞</span><span class="ni-lb">主页</span></div>
+    <div class="sdiv"></div>
+    <div class="sb-ttl">角色</div>
+    <div class="ni" id="nav-prov" onclick="go('prov')"><span class="ni-ic">📡</span><span class="ni-lb">信号提供者</span></div>
+    <div class="ni" id="nav-foll" onclick="go('foll')"><span class="ni-ic">📈</span><span class="ni-lb">跟单者</span></div>
+    <div class="sdiv"></div>
+    <div class="sb-ttl">工具</div>
+    <div class="ni" id="nav-mkt" onclick="go('mkt')"><span class="ni-ic">🏪</span><span class="ni-lb">信号市场</span></div>
+    <div class="ni" id="nav-chain" onclick="go('chain')"><span class="ni-ic">🔍</span><span class="ni-lb">链上查询</span></div>
+    <div style="flex:1"></div>
+    <div style="padding:8px 10px">
+      <div style="font-size:9px;color:var(--tx3);margin-bottom:5px">网络状态</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--gt)">
+        <span style="width:5px;height:5px;border-radius:50%;background:var(--g);display:inline-block" class="bl"></span>X Layer 已连接
+      </div>
+      <div style="font-size:9px;color:var(--tx3);margin-top:3px" id="sbInfo">Chain ID 1952 · 零 gas</div>
+    </div>
+  </div>
+  <div class="cont">
+    <!-- HOME -->
+    <div class="panel act" id="panel-home">
+      <div class="hw">
+        <div style="font-size:36px;margin-bottom:14px">📡</div>
+        <div class="ht">SignalMint</div>
+        <div class="hs">AI Agent 之间的交易信号协议——信号 Agent 发信号，执行 Agent 付费订阅，<br>OKX Agent Trade Kit 完成执行，全程无人工介入。</div>
+        <div class="rg">
+          <div class="rc rg2" onclick="go('prov')"><div class="ri">📡</div><div class="rn"><span class="nb ng">1</span>信号提供者</div><div class="rd2">我有策略，想把交易信号卖给执行 Agent 赚钱</div><div class="rh" style="color:var(--gt)">→ 注册 · 发信号 · 统计胜率</div></div>
+          <div class="rc rb2" onclick="go('foll')"><div class="ri">📈</div><div class="rn"><span class="nb nb2">2</span>跟单者</div><div class="rd2">订阅信号，自动执行交易，x402 自动付费</div><div class="rh" style="color:var(--bt)">→ 选择 · 付费 · 自动下单</div></div>
+          <div class="rc ra2" onclick="go('mkt')"><div class="ri">🏪</div><div class="rn"><span class="nb na">3</span>信号市场</div><div class="rd2">浏览所有信号 Agent，查看链上胜率和价格</div><div class="rh" style="color:var(--at)">→ 浏览 · 排序 · 筛选</div></div>
+          <div class="rc rp2" onclick="go('chain')"><div class="ri">🔍</div><div class="rn"><span class="nb np">4</span>链上查询</div><div class="rd2">查看合约、Agentic Wallet、x402 状态</div><div class="rh" style="color:var(--pt)">→ 合约 · 胜率 · 钱包</div></div>
+        </div>
+        <div style="margin-top:28px;font-size:10px;color:var(--tx3)">基于 OKX Agent Trade Kit · Onchain OS · x402 协议 · X Layer</div>
+      </div>
+    </div>
+    <!-- PROVIDER -->
+    <div class="panel" id="panel-prov">
+      <div class="sh">
+        <div class="sh-r"><span class="sh-ic">📡</span><span class="sh-t">信号提供者</span></div>
+        <div class="sh-s2">注册你的信号 Agent，分析真实 OKX 行情，发布付费信号</div>
+        <div class="sh-tools"><span class="pill pg">market candles</span><span class="pill pg">funding-rate</span><span class="pill pa">x402 收款</span><span class="pill pp">X Layer</span></div>
+      </div>
+      <div class="sr" id="pstats" style="display:none">
+        <div class="sb2"><div class="sv" id="ps-sig">0</div><div class="sl">已发信号</div></div>
+        <div class="sb2"><div class="sv" id="ps-wr">—</div><div class="sl">链上胜率</div></div>
+        <div class="sb2"><div class="sv" id="ps-inc">0 USDC</div><div class="sl">累计收入</div></div>
+        <div class="sb2"><div class="sv" id="ps-sub">0</div><div class="sl">订阅次数</div></div>
+      </div>
+      <div class="fa" id="pform">
+        <div class="fr">
+          <div class="fg"><label class="fl">AGENT 名称</label><input class="fi" id="pn" value="alpha-quant-v1"></div>
+          <div class="fg" style="max-width:130px"><label class="fl">价格 (USDC)</label><input class="fi" id="pp2" value="0.05"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label class="fl">交易对</label><select class="fsel" id="ppair"><option>BTC-USDT</option><option>ETH-USDT</option><option>SOL-USDT</option></select></div>
+          <div class="fg"><label class="fl">TTL（秒）</label><input class="fi" id="pttl" value="60"></div>
+          <div class="fg"><label class="fl">策略描述</label><input class="fi" id="pdesc" value="SMA + RSI 技术分析"></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn bng" onclick="regProv()">⚡ 注册到 X Layer</button>
+          <button class="btn bng2" onclick="go('home')">← 返回</button>
+        </div>
+      </div>
+      <div id="plive" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div class="ab">
+          <div><div style="font-size:13px;color:#fff;font-weight:600" id="plabel">—</div><div style="font-size:10px;color:var(--tx3);margin-top:1px" id="pclabel">—</div></div>
+          <div style="flex:1"></div>
+          <button class="btn bng bsm" onclick="genSig()">📡 生成信号</button>
+          <button class="btn bng2 bsm" onclick="resetProv()">重置</button>
+        </div>
+        <div class="lw" id="plog"><div class="em"><div class="em-i">📡</div><div class="em-t">按「生成信号」分析真实 OKX 行情并发布</div></div></div>
+      </div>
+    </div>
+    <!-- FOLLOWER -->
+    <div class="panel" id="panel-foll">
+      <div class="sh">
+        <div class="sh-r"><span class="sh-ic">📈</span><span class="sh-t">跟单者</span></div>
+        <div class="sh-s2">选择信号 Agent，x402 自动付费，OKX 模拟盘真实下单</div>
+        <div class="sh-tools"><span class="pill pb">MCP Client</span><span class="pill pa">x402 付费</span><span class="pill pg">swap place-order</span><span class="pill pp">Agentic Wallet</span></div>
+      </div>
+      <!-- Account Panel -->
+      <div class="acct-panel" id="acctPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:11px;font-weight:600;color:var(--tx2)">💰 模拟盘账户 (OKX Demo Trading)</span>
+          <span style="font-size:9px;color:var(--tx3)" id="acctTime">--</span>
+        </div>
+        <div class="acct-stats">
+          <div class="acct-stat"><div class="acct-val" style="color:var(--tx3)" id="acctInit">$--</div><div class="acct-lbl">初始净值</div></div>
+          <div class="acct-stat"><div class="acct-val" id="acctCur">$--</div><div class="acct-lbl">当前净值</div></div>
+          <div class="acct-stat"><div class="acct-val" id="acctPnl">--</div><div class="acct-lbl">总盈亏</div></div>
+          <div class="acct-stat"><div class="acct-val" style="color:var(--bt)" id="acctN">0</div><div class="acct-lbl">交易次数</div></div>
+        </div>
+        <div class="acct-assets" id="acctAssets"></div>
+        <div class="eq-wrap">
+          <div class="eq-head"><span>实时净值曲线</span><span id="eqRange">--</span></div>
+          <svg id="eqSvg" width="100%" height="50" viewBox="0 0 500 50" preserveAspectRatio="none" style="display:block">
+            <defs><linearGradient id="eqG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10B981" stop-opacity="0.3"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/></linearGradient></defs>
+            <path id="eqArea" fill="url(#eqG)" d=""/>
+            <polyline id="eqLine" fill="none" stroke="#10B981" stroke-width="1.5" points=""/>
+            <line id="eqBase" x1="0" y1="25" x2="500" y2="25" stroke="#2A2D3A" stroke-width="0.5" stroke-dasharray="3"/>
+          </svg>
+          <div style="display:flex;justify-content:space-between;font-size:8px;color:var(--tx3);margin-top:2px"><span id="eqL">--</span><span id="eqR">--</span></div>
+        </div>
+      </div>
+      <!-- Trade History -->
+      <div style="padding:10px 22px 0;display:none" id="tradeHist">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:11px;font-weight:600;color:var(--tx2)">📋 跟单交易记录</span>
+          <span style="font-size:9px;color:var(--tx3)" id="thCount">0 笔</span>
+        </div>
+        <div style="overflow-x:auto;max-height:180px;overflow-y:auto">
+          <table class="dt" style="font-size:10px"><thead><tr><th>#</th><th>方向</th><th>交易对</th><th>成交价</th><th>订单号</th><th>盈亏</th><th>来源</th><th>时间</th></tr></thead>
+          <tbody id="thBody"></tbody></table>
+        </div>
+      </div>
+      <!-- Agent Select -->
+      <div id="fsel" style="padding:14px 22px">
+        <div style="font-size:11px;color:var(--tx3);margin-bottom:10px">选择要订阅的信号 Agent：</div>
+        <div id="faglist" style="display:flex;flex-direction:column;gap:7px"></div>
+      </div>
+      <!-- Live execution -->
+      <div id="flive" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div class="strack" id="fsteps"></div>
+        <div class="ab">
+          <div><div style="font-size:13px;color:#fff;font-weight:600" id="flabel">—</div><div style="font-size:10px;color:var(--tx3);margin-top:1px" id="fslabel">—</div></div>
+          <div style="flex:1"></div>
+          <button class="btn bnb bsm" onclick="execFoll()">📈 执行跟单</button>
+          <button class="btn bng2 bsm" onclick="resetFoll()">重置</button>
+        </div>
+        <div class="lw" id="flog"><div class="em"><div class="em-i">📈</div><div class="em-t">按「执行跟单」开始 7 步完整链路</div></div></div>
+      </div>
+    </div>
+    <!-- MARKET -->
+    <div class="panel" id="panel-mkt">
+      <div class="sh">
+        <div class="sh-r"><span class="sh-ic">🏪</span><span class="sh-t">信号市场</span></div>
+        <div class="sh-s2">所有已注册的信号 Agent · 链上数据公开透明</div>
+        <div class="sh-tools"><span class="pill pp">X Layer 注册表</span><span class="pill pg">链上胜率</span></div>
+      </div>
+      <div class="sr" id="mktStats">
+        <div class="sb2"><div class="sv" id="mn">0</div><div class="sl">Agent 数</div></div>
+        <div class="sb2"><div class="sv" id="msig">0</div><div class="sl">总信号数</div></div>
+        <div class="sb2"><div class="sv" id="mvol" style="color:var(--gt)">0 USDC</div><div class="sl">x402 结算量</div></div>
+        <div class="sb2"><div class="sv" id="mtx">0</div><div class="sl">交易笔数</div></div>
+      </div>
+      <div class="tw"><table class="dt"><thead><tr><th>排名</th><th>Agent</th><th>交易对</th><th>胜率</th><th>信号数</th><th>价格</th><th>状态</th><th>操作</th></tr></thead><tbody id="mtbody"><tr><td colspan="8" style="text-align:center;color:var(--tx3);padding:30px">以「信号提供者」注册第一个 Agent</td></tr></tbody></table></div>
+    </div>
+    <!-- CHAIN -->
+    <div class="panel" id="panel-chain">
+      <div class="sh">
+        <div class="sh-r"><span class="sh-ic">🔍</span><span class="sh-t">链上查询</span></div>
+        <div class="sh-s2">X Layer 注册表合约 · Agentic Wallet · x402 协议</div>
+        <div class="sh-tools"><span class="pill pp">X Layer Testnet</span><span class="pill pa">零 gas</span></div>
+      </div>
+      <div class="cw">
+        <div class="cc"><div class="cct">📋 信号注册表合约</div>
+          <div class="cr"><span class="ck">合约地址</span><span class="cv ad" id="ccAddr">--</span></div>
+          <div class="cr"><span class="ck">网络</span><span class="cv">X Layer Testnet · Chain ID 1952</span></div>
+          <div class="cr"><span class="ck">Agent 数</span><span class="cv gn" id="ccAgents">0</span></div>
+          <div class="cr"><span class="ck">Gas 费用</span><span class="cv gn">$0.00（X Layer 零 gas）</span></div>
+        </div>
+        <div class="cc"><div class="cct">🔐 Agentic Wallet</div>
+          <div class="cr"><span class="ck">EVM 地址</span><span class="cv ad" id="ccWallet">--</span></div>
+          <div class="cr"><span class="ck">Solana</span><span class="cv ad" id="ccSol">--</span></div>
+          <div class="cr"><span class="ck">TEE 状态</span><span class="cv gn">✓ 私钥保护 · Agent 不可访问</span></div>
+          <div class="cr"><span class="ck">风控</span><span class="cv gn">Token 检测 ✓ · 黑名单 ✓ · 交易模拟 ✓</span></div>
+        </div>
+        <div class="cc"><div class="cct">⚡ x402 协议</div>
+          <div class="cr"><span class="ck">协议</span><span class="cv">HTTP 402 Payment Required</span></div>
+          <div class="cr"><span class="ck">网络</span><span class="cv">Base Sepolia 测试网</span></div>
+          <div class="cr"><span class="ck">Facilitator</span><span class="cv">Coinbase (x402.org)</span></div>
+          <div class="cr"><span class="ck">Token</span><span class="cv">USDC</span></div>
+          <div class="cr"><span class="ck">Gas</span><span class="cv gn">0 (X Layer 零 Gas)</span></div>
+        </div>
+        <div class="cc"><div class="cct">🛠 OKX 工具覆盖 (8 工具 · 5 模块 · 11 Skills)</div>
+          <div class="cr"><span class="ck">Market</span><span class="cv">candles · funding-rate · depth</span></div>
+          <div class="cr"><span class="ck">Trade</span><span class="cv">swap place-order · spot place-order</span></div>
+          <div class="cr"><span class="ck">Account</span><span class="cv">positions-history</span></div>
+          <div class="cr"><span class="ck">Payment</span><span class="cv am">x402 协议</span></div>
+          <div class="cr"><span class="ck">Wallet</span><span class="cv gn">Agentic Wallet (TEE)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// ===== WebSocket =====
+const ws = new WebSocket(`ws://${location.host}`);
+let state = {};
+let provRegistered = false, provData = {};
+let follAgent = null;
+const eqPoints = [];
+const tradeLog = [];
+
+ws.onopen = () => ws.send(JSON.stringify({ action: 'getState' }));
+ws.onmessage = (e) => {
+  const { event, data } = JSON.parse(e.data);
+  if (event === 'state:update') { state = data; refreshAll(data); }
+  if (event === 'signal:new') addProvLog(data);
+  if (event === 'execution:result') addFollResult(data);
+  if (event === 'follower:ready') {}
+};
+
+function send(action, params = {}) { ws.send(JSON.stringify({ action, ...params })); }
+
+// ===== Helpers =====
+function ts() { return new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit',second:'2-digit'}); }
+function addLog(id, badge, cls, msg) {
+  const w = document.getElementById(id);
+  const em = w.querySelector('.em'); if (em) em.remove();
+  const d = document.createElement('div'); d.className = 'le';
+  d.innerHTML = `<span class="lt">${ts()}</span><span class="lb2 ${cls}">${badge}</span><span class="lm">${msg}</span>`;
+  w.appendChild(d); w.scrollTop = w.scrollHeight;
+}
+
+// ===== Navigation =====
+let cur = 'home';
+function go(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('act'));
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('act','g','a','p'));
+  document.getElementById('panel-' + id).classList.add('act');
+  const nav = document.getElementById('nav-' + id);
+  if (nav) { nav.classList.add('act'); if(id==='prov') nav.classList.add('g'); if(id==='mkt') nav.classList.add('a'); if(id==='chain') nav.classList.add('p'); }
+  cur = id;
+  if (id === 'foll') { renderFollAgents(); send('getState'); }
+  if (id === 'mkt' || id === 'chain') send('getState');
+}
+
+// ===== Provider =====
+function regProv() {
+  const name = document.getElementById('pn').value.trim() || 'alpha-quant-v1';
+  const price = document.getElementById('pp2').value || '0.05';
+  const pair = document.getElementById('ppair').value;
+  provData = { name, price, pair };
+  send('registerAgent', { name, price: parseFloat(price), pair });
+  document.getElementById('pform').style.display = 'none';
+  document.getElementById('pstats').style.display = 'flex';
+  document.getElementById('plive').style.display = 'flex';
+  document.getElementById('plabel').textContent = name;
+  document.getElementById('pclabel').textContent = `${price} USDC/次 · ${pair}`;
+  document.getElementById('plog').innerHTML = '';
+  addLog('plog','X LAYER','lbb',`注册到链上注册表`);
+  addLog('plog','WALLET','lbg','Agentic Wallet TEE 初始化 ✓');
+  addLog('plog','READY','lbg',`<strong>${name}</strong> 已上线 · 按「生成信号」开始`);
+  provRegistered = true;
+}
+
+function genSig() {
+  if (!provRegistered) return;
+  send('generateSignal', { pair: provData.pair });
+}
+
+let pSigs = 0, pWins = 0, pInc = 0;
+function addProvLog(signal) {
+  if (cur !== 'prov') return;
+  const i = signal.intent;
+  const dir = i.action === 'buy' ? 'BUY' : 'SELL';
+  const dc = i.action === 'buy' ? 'hg' : 'hr';
+  addLog('plog','MARKET','lbg',`<code>market_candles</code> + <code>funding_rate</code> → ${i.pair}`);
+  setTimeout(() => {
+    addLog('plog','SIGNAL','lbb',`<strong class="${dc}">${dir}</strong> ${i.pair} · ${i.reason || '技术分析'}`);
+    addLog('plog','PUBLISH','lbb',`写入注册表 <code>${signal.signalId}</code>`);
+    // Update stats from server state (not local Math.random)
+    pSigs++;
+    pInc += parseFloat(provData.price) || 0.05;
+    const perf = state.performances?.[provData.name] || {};
+    const serverSigs = perf.totalSignals || pSigs;
+    const serverWr = perf.totalSignals > 0 ? (perf.winRate * 100).toFixed(1) : '—';
+    document.getElementById('ps-sig').textContent = serverSigs;
+    const wrel = document.getElementById('ps-wr');
+    wrel.textContent = serverWr + (serverWr !== '—' ? '%' : '');
+    wrel.style.color = parseFloat(serverWr) > 60 ? 'var(--gt)' : parseFloat(serverWr) > 50 ? 'var(--at)' : '#F87171';
+    document.getElementById('ps-inc').textContent = pInc.toFixed(2) + ' USDC';
+    document.getElementById('ps-sub').textContent = serverSigs;
+  }, 300);
+}
+
+function resetProv() {
+  provRegistered = false; pSigs = 0; pWins = 0; pInc = 0;
+  document.getElementById('pform').style.display = 'flex';
+  document.getElementById('pstats').style.display = 'none';
+  document.getElementById('plive').style.display = 'none';
+}
+
+// ===== Follower =====
+function renderFollAgents() {
+  const agents = state.agents || [];
+  const el = document.getElementById('faglist');
+  if (agents.length === 0) {
+    el.innerHTML = '<div style="color:var(--tx3);text-align:center;padding:20px;font-size:11px">暂无 Agent，请先以「信号提供者」注册</div>';
+    return;
+  }
+  el.innerHTML = agents.map(a => {
+    const p = state.performances?.[a.agentId] || {};
+    const wr = p.totalSignals > 0 ? (p.winRate * 100).toFixed(1) : 'N/A';
+    return `<div style="background:var(--s2);border:1px solid var(--bd);border-radius:9px;padding:12px 14px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='var(--b)'" onmouseout="this.style.borderColor='var(--bd)'" onclick="selAgent('${a.agentId}')">
+      <div style="font-size:22px">📡</div>
+      <div style="flex:1"><div style="font-size:12px;font-weight:600;color:#fff">${a.agentId}</div><div style="font-size:9px;color:var(--tx3)">${a.description || ''}</div></div>
+      <div style="text-align:center;min-width:50px"><div style="font-size:15px;font-weight:700;color:var(--gt)">${wr}%</div><div style="font-size:8px;color:var(--tx3)">胜率</div></div>
+      <div style="text-align:center;min-width:50px"><div style="font-size:13px;font-weight:600;color:var(--at)">${a.pricePerSignal} USDC</div><div style="font-size:8px;color:var(--tx3)">每次</div></div>
+      <button class="sbtn">订阅</button>
+    </div>`;
+  }).join('');
+}
+
+const FSTEPS = ['发现信号','预验证','x402付费','Wallet风控','获取信号','独立验证','下单执行'];
+function renderSteps(ac) {
+  document.getElementById('fsteps').innerHTML = FSTEPS.map((s, i) =>
+    `<div class="sc2"><div class="sd ${i<ac?'dn':i===ac?'ac':''}">${i<ac?'✓':i+1}</div><div class="slbl" style="color:${i<ac?'var(--gt)':i===ac?'var(--bt)':'var(--tx3)'}">${s}</div></div>` +
+    (i < FSTEPS.length - 1 ? `<div class="sline ${i<ac?'dn':''}"></div>` : '')
+  ).join('');
+}
+
+function selAgent(id) {
+  follAgent = id;
+  send('initFollower', { agentId: id });
+  document.getElementById('fsel').style.display = 'none';
+  document.getElementById('flive').style.display = 'flex';
+  const a = (state.agents || []).find(x => x.agentId === id);
+  document.getElementById('flabel').textContent = id;
+  document.getElementById('fslabel').textContent = a ? `${a.pricePerSignal} USDC/次` : '';
+  renderSteps(-1);
+  document.getElementById('flog').innerHTML = '';
+  addLog('flog','READY','lbb',`已订阅 <strong>${id}</strong> · 按「执行跟单」开始`);
+}
+
+function execFoll() {
+  if (!follAgent) return;
+  send('executeSignal', { agentId: follAgent });
+}
+
+function addFollResult(data) {
+  if (!data.steps) return;
+  // Animate steps
+  let i = 0;
+  function nextStep() {
+    if (i < data.steps.length) {
+      renderSteps(i + 1);
+      const s = data.steps[i];
+      const cls = s.status === 'ok' ? 'lbg' : 'lbr';
+      addLog('flog', `STEP ${i+1}`, cls, s.name);
+      i++;
+      setTimeout(nextStep, 200);
+    } else {
+      // Show result
+      if (data.execution) {
+        const e = data.execution;
+        const pc = e.pnl >= 0 ? 'hg' : 'hr';
+        addLog('flog', e.pnl >= 0 ? 'WIN' : 'LOSS', e.pnl >= 0 ? 'lbg' : 'lbr',
+          `订单 <code>${e.orderId}</code> · ${e.side?.toUpperCase()} ${e.instId} @ <span class="ha">${e.fillPrice}</span> · PnL: <span class="${pc}">${e.pnl>=0?'+':''}${e.pnl} USDT</span> · Gas: <span class="hg">$0.00</span> · ${e.real ? '<span class="hg">真实API</span>' : '模拟'}`);
+      }
+      addLog('flog','CHAIN','lbb','recordResult() → 胜率更新链上 ✓');
+      setTimeout(() => renderSteps(-1), 2000);
+
+      // Update account & trade history
+      updateAccount(data);
+      updateTradeHist(data);
+    }
+  }
+  nextStep();
+}
+
+function resetFoll() {
+  follAgent = null;
+  document.getElementById('fsel').style.display = 'block';
+  document.getElementById('flive').style.display = 'none';
+  tradeLog.length = 0;
+  document.getElementById('tradeHist').style.display = 'none';
+  renderFollAgents();
+}
+
+// ===== Account Panel =====
+function updateAccount(data) {
+  const acct = data?.account;
+  const initEq = data?.initialEquity;
+  if (!acct || !acct.totalEquity) return;
+
+  const cur = acct.totalEquity, init = initEq || cur;
+  const pnl = cur - init, pct = init > 0 ? (pnl / init * 100) : 0;
+
+  document.getElementById('acctInit').textContent = '$' + init.toFixed(2);
+  document.getElementById('acctCur').textContent = '$' + cur.toFixed(2);
+  const pe = document.getElementById('acctPnl');
+  pe.textContent = (pnl >= 0 ? '+' : '') + '$' + pnl.toFixed(2) + ' (' + (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%)';
+  pe.style.color = pnl >= 0 ? 'var(--gt)' : '#F87171';
+  document.getElementById('acctN').textContent = (data.tradeHistory || []).length;
+  document.getElementById('acctTime').textContent = ts();
+
+  // Assets
+  if (acct.balances) {
+    document.getElementById('acctAssets').innerHTML = Object.entries(acct.balances).map(([c, v]) =>
+      `<span class="acct-asset"><span style="color:var(--at)">${c}</span> <span style="color:#fff;font-weight:600">${v.available?.toFixed(c==='USDT'?2:6)}</span>${v.equity > 0 ? ` <span style="color:var(--tx3)">≈$${v.equity.toFixed(0)}</span>` : ''}</span>`
+    ).join('');
+  }
+
+  // Equity curve
+  eqPoints.push({ v: cur, t: ts() });
+  if (eqPoints.length > 50) eqPoints.shift();
+  if (eqPoints.length >= 2) {
+    const vals = eqPoints.map(p => p.v);
+    const mn = Math.min(...vals), mx = Math.max(...vals), rng = mx - mn || 1;
+    const W = 500, H = 50, pad = 3;
+    const pts = vals.map((v, i) => `${(i/(vals.length-1)*W).toFixed(1)},${(pad+(1-(v-mn)/rng)*(H-pad*2)).toFixed(1)}`);
+    document.getElementById('eqLine').setAttribute('points', pts.join(' '));
+    document.getElementById('eqArea').setAttribute('d', `M0,${H} ${pts.map(p => `L${p}`).join(' ')} L${W},${H} Z`);
+    const isUp = vals[vals.length-1] >= vals[0];
+    const col = isUp ? '#10B981' : '#EF4444';
+    document.getElementById('eqLine').setAttribute('stroke', col);
+    document.querySelector('#eqG stop:first-child').setAttribute('stop-color', col);
+    document.querySelector('#eqG stop:last-child').setAttribute('stop-color', col);
+    const baseY = pad + (1 - (init - mn) / rng) * (H - pad * 2);
+    document.getElementById('eqBase').setAttribute('y1', baseY);
+    document.getElementById('eqBase').setAttribute('y2', baseY);
+    document.getElementById('eqL').textContent = eqPoints[0].t;
+    document.getElementById('eqR').textContent = eqPoints[eqPoints.length-1].t;
+    document.getElementById('eqRange').textContent = `$${mn.toFixed(0)} - $${mx.toFixed(0)}`;
+  }
+}
+
+// ===== Trade History =====
+function updateTradeHist(data) {
+  const trades = data?.tradeHistory || [];
+  if (trades.length === 0) return;
+  document.getElementById('tradeHist').style.display = 'block';
+  document.getElementById('thCount').textContent = trades.length + ' 笔';
+  document.getElementById('thBody').innerHTML = trades.slice().reverse().map(t => {
+    const sc = t.side === 'buy' ? 'lbg' : 'lbr';
+    const sl = t.side === 'buy' ? '买入' : '卖出';
+    const pc = t.pnl >= 0 ? 'hg' : 'hr';
+    const src = t.real ? '<span class="hg">真实</span>' : '<span style="color:var(--tx3)">模拟</span>';
+    return `<tr><td style="color:var(--tx3)">${t.id}</td><td><span class="lb2 ${sc}" style="font-size:8px">${sl}</span></td><td style="color:#fff;font-weight:600">${t.pair}</td><td style="font-family:monospace">$${t.fillPrice?.toLocaleString()}</td><td style="font-family:monospace;font-size:9px;color:var(--tx3)">${String(t.orderId).slice(0,12)}...</td><td class="${pc}" style="font-weight:700;font-family:monospace">${t.pnl>=0?'+':''}${t.pnl?.toFixed(2)}</td><td>${src}</td><td style="color:var(--tx3)">${t.time}</td></tr>`;
+  }).join('');
+}
+
+// ===== Market =====
+function renderMkt() {
+  const agents = state.agents || [];
+  const ps = state.paymentStats || {};
+  document.getElementById('mn').textContent = agents.length;
+  let totalSigs = 0;
+  agents.forEach(a => { totalSigs += (state.performances?.[a.agentId]?.totalSignals || 0); });
+  document.getElementById('msig').textContent = totalSigs;
+  document.getElementById('mvol').textContent = (ps.totalVolume || 0).toFixed(2) + ' USDC';
+  document.getElementById('mtx').textContent = ps.totalTransactions || 0;
+
+  if (agents.length === 0) {
+    document.getElementById('mtbody').innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--tx3);padding:30px">以「信号提供者」注册第一个 Agent</td></tr>';
+    return;
+  }
+  const sorted = [...agents].sort((a, b) => {
+    const pa = state.performances?.[a.agentId]?.winRate || 0;
+    const pb = state.performances?.[b.agentId]?.winRate || 0;
+    return pb - pa;
+  });
+  document.getElementById('mtbody').innerHTML = sorted.map((a, i) => {
+    const p = state.performances?.[a.agentId] || {};
+    const wr = p.totalSignals > 0 ? (p.winRate * 100).toFixed(1) : '0';
+    const wc = p.winRate >= 0.5 ? 'wh' : p.winRate >= 0.4 ? 'wm' : 'wl';
+    const rc = i === 0 ? 'r1' : i === 1 ? 'r2' : i === 2 ? 'r3' : 'rn2';
+    return `<tr>
+      <td><span class="rbg ${rc}">${i+1}</span></td>
+      <td><div class="an">${a.agentId}</div><div class="ap">${a.description||''}</div></td>
+      <td><span class="pill pb" style="font-size:9px">BTC/ETH/SOL</span></td>
+      <td><span class="wr ${wc}">${wr}%</span></td>
+      <td>${p.totalSignals || 0}</td>
+      <td style="color:var(--at);font-weight:600">${a.pricePerSignal} USDC</td>
+      <td style="color:${a.status==='active'?'var(--gt)':'#F87171'}">${a.status==='active'?'● 活跃':'● 降权'}</td>
+      <td><button class="sbtn" onclick="go('foll');setTimeout(()=>selAgent('${a.agentId}'),100)">订阅</button></td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== Chain =====
+function renderChain() {
+  document.getElementById('ccAddr').textContent = state.contractAddress || '0x26e39a1C95857BDeB8570a7375822B525DcDb1D6';
+  document.getElementById('ccAgents').textContent = (state.agents || []).length;
+  document.getElementById('ccWallet').textContent = '0xc981d073a309b7ab3f25705681670d21138db522';
+  document.getElementById('ccSol').textContent = 'Ev8Gdxp6dyHeVT55hMSxXHiAMPm4BGHGscW5ViRiz435';
+}
+
+// ===== Refresh =====
+function refreshAll(data) {
+  updateAccount(data);
+  if (cur === 'mkt') renderMkt();
+  if (cur === 'chain') renderChain();
+  if (cur === 'foll') { renderFollAgents(); updateTradeHist(data); }
+}
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'SELECT') {
+    if (cur === 'prov' && provRegistered) genSig();
+    if (cur === 'foll' && follAgent) execFoll();
+  }
+});
+
+// Init
+fetch('/api/state').then(r => r.json()).then(d => {
+  state = d.registry || {};
+  state.paymentStats = d.payment;
+  state.account = d.account;
+  state.initialEquity = d.initialEquity;
+  state.tradeHistory = d.tradeHistory;
+  updateAccount(d);
+});
+go('home');
+</script>
+</body>
+</html>

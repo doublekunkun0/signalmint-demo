@@ -1,0 +1,43 @@
+{
+  "name": "signalmint-demo",
+  "version": "1.0.0",
+  "description": "SignalMint - x402 driven Agent copy-trading signal market built on OKX Agent Trade Kit",
+  "main": "src/demo.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "demo": "node src/demo.js",
+    "live": "node src/liveTrading.js",
+    "x402:server": "node src/x402/signalServer.js",
+    "x402:client": "node src/x402/signalClient.js",
+    "dashboard": "node dashboard/server.js",
+    "deploy": "node scripts/deploy.js",
+    "test": "node src/test.js"
+  },
+  "dependencies": {
+    "@coinbase/x402": "^2.1.0",
+    "boxen": "^7.1.1",
+    "chalk": "^5.3.0",
+    "cli-table3": "^0.6.3",
+    "dotenv": "^17.3.1",
+    "ethers": "^6.13.0",
+    "express": "^4.18.2",
+    "ora": "^7.0.1",
+    "ws": "^8.16.0",
+    "x402-express": "^1.1.0"
+  },
+  "keywords": [
+    "okx",
+    "agent",
+    "x402",
+    "trading",
+    "signal",
+    "mcp",
+    "ai"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.2",
+    "hardhat": "^2.28.6"
+  }
+}
