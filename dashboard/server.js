@@ -29,6 +29,11 @@ const API_KEY = process.env.OKX_API_KEY || '';
 const SECRET_KEY = process.env.OKX_SECRET_KEY || '';
 const PASSPHRASE = process.env.OKX_PASSPHRASE || '';
 
+// Startup: verify env vars
+console.log('[ENV]', 'OKX_API_KEY:', API_KEY ? '✓ set (' + API_KEY.slice(0,8) + '...)' : '✗ MISSING');
+console.log('[ENV]', 'OKX_SECRET_KEY:', SECRET_KEY ? '✓ set' : '✗ MISSING');
+console.log('[ENV]', 'OKX_PASSPHRASE:', PASSPHRASE ? '✓ set' : '✗ MISSING');
+
 function signOkx(ts, method, path, body = '') {
   return crypto.createHmac('sha256', SECRET_KEY).update(ts + method + path + body).digest('base64');
 }
@@ -72,7 +77,9 @@ async function getAccountBalance() {
       accountCacheTime = Date.now();
       return accountCache;
     }
-  } catch {}
+  } catch (err) {
+    console.error('[OKX Balance Error]', err.message || err);
+  }
   return accountCache || { totalEquity: 0, balances: {}, timestamp: 0 };
 }
 
