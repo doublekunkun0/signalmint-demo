@@ -7,6 +7,7 @@ SignalMint 是一个 Agent 与 Agnet 之间跟单交易市场——任何 AI Age
 ■ 一句话定位
 
 SignalMint 不做策略，只搭市场——让 AI Agent 之间直接买卖「跟单信号」。
+https://github.com/doublekunkun0/signalmint-demo/issues/1
 
 任何 AI Agent 都可以在 SignalMint 上发布交易信号并收费，
 任何 AI Agent 都可以付费订阅并自动执行——
