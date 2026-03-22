@@ -333,7 +333,8 @@ body{background:var(--bg);color:var(--tx);font-family:var(--f);min-height:100vh;
 </div>
 <script>
 // ===== WebSocket =====
-const ws = new WebSocket(`ws://${location.host}`);
+const wsProto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+const ws = new WebSocket(`${wsProto}//${location.host}`);
 let state = {};
 let provRegistered = false, provData = {};
 let follAgent = null;
