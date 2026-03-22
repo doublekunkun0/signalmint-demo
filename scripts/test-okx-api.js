@@ -10,7 +10,7 @@ const SECRET = process.env.OKX_SECRET_KEY;
 const PASS = process.env.OKX_PASSPHRASE;
 if (!API_KEY || !SECRET || !PASS) { console.error('Missing OKX credentials in .env'); process.exit(1); }
 const BASE = 'https://www.okx.com';
-const PROXY = process.env.https_proxy || process.env.http_proxy || 'http://127.0.0.1:7890';
+const PROXY = process.env.https_proxy || process.env.http_proxy || '';
 
 function sign(timestamp, method, path, body = '') {
   return crypto.createHmac('sha256', SECRET).update(timestamp + method + path + body).digest('base64');
@@ -29,7 +29,8 @@ async function okxApi(method, path, body = null) {
     'Content-Type': 'application/json',
   };
 
-  const opts = { method, headers, dispatcher: new ProxyAgent(PROXY) };
+  const opts = { method, headers };
+  if (PROXY) opts.dispatcher = new ProxyAgent(PROXY);
   if (body) opts.body = bodyStr;
 
   const res = await fetch(BASE + path, opts);

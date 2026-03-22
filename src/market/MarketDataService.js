@@ -12,10 +12,9 @@ import { ProxyAgent } from 'undici';
 
 const OKX_BASE = 'https://www.okx.com';
 
-// Auto-detect proxy from environment, fallback to common local proxy
+// Auto-detect proxy from environment (no hardcoded fallback for cloud deployment)
 const PROXY_URL = process.env.https_proxy || process.env.HTTPS_PROXY
-  || process.env.http_proxy || process.env.HTTP_PROXY
-  || 'http://127.0.0.1:7890'; // Fallback: common local proxy
+  || process.env.http_proxy || process.env.HTTP_PROXY || '';
 
 async function okxFetch(path, params = {}) {
   const qs = new URLSearchParams(params).toString();

@@ -24,7 +24,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // OKX Account API for real balance tracking
 const OKX_BASE = 'https://www.okx.com';
-const PROXY_URL = process.env.https_proxy || process.env.HTTPS_PROXY || process.env.http_proxy || 'http://127.0.0.1:7890';
+const PROXY_URL = process.env.https_proxy || process.env.HTTPS_PROXY || process.env.http_proxy || '';
 const API_KEY = process.env.OKX_API_KEY || '';
 const SECRET_KEY = process.env.OKX_SECRET_KEY || '';
 const PASSPHRASE = process.env.OKX_PASSPHRASE || '';
@@ -35,7 +35,7 @@ function signOkx(ts, method, path, body = '') {
 
 async function okxAccountApi(method, path) {
   const ts = new Date().toISOString();
-  const res = await fetch(OKX_BASE + path, {
+  const opts = {
     method,
     headers: {
       'OK-ACCESS-KEY': API_KEY,
@@ -45,8 +45,9 @@ async function okxAccountApi(method, path) {
       'x-simulated-trading': '1',
       'Content-Type': 'application/json',
     },
-    dispatcher: new ProxyAgent(PROXY_URL),
-  });
+  };
+  if (PROXY_URL) opts.dispatcher = new ProxyAgent(PROXY_URL);
+  const res = await fetch(OKX_BASE + path, opts);
   return res.json();
 }
 
@@ -309,7 +310,7 @@ async function broadcastState() {
   });
 }
 
-const PORT = 3210;
+const PORT = process.env.PORT || 3210;
 server.listen(PORT, () => {
   console.log(`\n  🚀 SignalMint Dashboard: http://localhost:${PORT}\n`);
 });

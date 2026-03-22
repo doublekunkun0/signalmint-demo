@@ -20,7 +20,7 @@ dotenv.config({ path: _join(_dirname(fileURLToPath(import.meta.url)), '..', '..'
 const OKX_BASE = 'https://www.okx.com';
 const PROXY_URL = process.env.https_proxy || process.env.HTTPS_PROXY
   || process.env.http_proxy || process.env.HTTP_PROXY
-  || 'http://127.0.0.1:7890';
+  || '';
 
 const API_KEY = process.env.OKX_API_KEY || '';
 const SECRET_KEY = process.env.OKX_SECRET_KEY || '';
