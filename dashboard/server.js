@@ -253,16 +253,13 @@ wss.on('connection', (ws) => {
           // 1. Account equity delta (includes all asset price changes)
           const equityPnL = +(acctAfterTrade.totalEquity - prevEquity).toFixed(2);
 
-          // 2. Trade-specific PnL (only from this signal's execution)
-          // For market orders: fee is the immediate cost
+          // 2. Trade-specific PnL
           const e = result.execution;
           const fillSize = parseFloat(e.fillSize) || 0;
           const fillPrice = e.fillPrice || 0;
           const notional = fillSize * fillPrice;
-          // Fee from OKX is in coin units (negative), convert to USD
-          const feeUsd = Math.abs(e.fee || 0) * fillPrice;
-          // For spot market orders, tradePnL = -fee (no holding period)
-          // The real signal PnL comes from comparing buy vs sell over time
+          // Use pre-calculated feeUsd from MCPParser (handles feeCcy correctly)
+          const feeUsd = e.feeUsd || 0;
           const tradePnL = +(-feeUsd).toFixed(4);
 
           tradeHistory.push({

@@ -202,18 +202,22 @@ export class MCPParser {
           let fee = 0;
           let state = 'filled';
 
+          let feeCcy = '';
           if (detailResult.code === '0' && detailResult.data?.[0]) {
             const d = detailResult.data[0];
             fillPrice = parseFloat(d.avgPx) || fillPrice;
             fillSize = d.accFillSz || fillSize;
             fee = parseFloat(d.fee) || 0;
+            feeCcy = d.feeCcy || '';
             state = d.state;
           }
 
-          // PnL from real trade: fee is the only known cost at market order fill
-          // Real PnL will be tracked via account equity delta in dashboard/server.js
-          const feeUsd = Math.abs(fee) * fillPrice;
-          const pnl = +(-feeUsd).toFixed(2); // Market order PnL = -fee (no holding period)
+          // Fee conversion: OKX fee is in feeCcy
+          // If feeCcy is stablecoin (USDT/USDC), fee is already in USD
+          // If feeCcy is crypto (BTC/ETH/SOL), multiply by price
+          const isStableFee = ['USDT', 'USDC'].includes(feeCcy);
+          const feeUsd = isStableFee ? Math.abs(fee) : Math.abs(fee) * fillPrice;
+          const pnl = +(-feeUsd).toFixed(4);
 
           const execution = {
             success: true,
@@ -227,6 +231,8 @@ export class MCPParser {
             fillSize,
             notional: +(fillPrice * parseFloat(fillSize)).toFixed(2),
             fee,
+            feeCcy,
+            feeUsd,
             slippage: 0,
             status: state,
             pnl: +pnl.toFixed(2),
